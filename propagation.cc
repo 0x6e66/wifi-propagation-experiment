@@ -52,15 +52,9 @@ void analyze_throughput_distance(double distance_max, double distance_step, doub
     std::ofstream out(model_name + ".csv");
     out << "distance,";
     out << "flow_throughput,"; 
-    out << "rssi_average,"; 
-    out << "snr_average,"; 
-    out << "noise_average,"; 
-    out << "rssi_dev,"; 
-    out << "snr_dev,"; 
-    out << "noise_dev" << std::endl;
+    out << "rssi_average" << std::endl; 
 
-    for (double distance = 0; distance <= distance_max; distance+= distance_step)
-    {
+    for (double distance = 0; distance <= distance_max; distance+= distance_step) {
         setup(distance, simulation_time, model_name);
 
         FlowMonitorHelper flowmon;
@@ -72,8 +66,7 @@ void analyze_throughput_distance(double distance_max, double distance_step, doub
         Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier());
         std::map<FlowId, FlowMonitor::FlowStats> stats = monitor->GetFlowStats();
 
-        for (const auto& flow : stats)
-        {
+        for (const auto& flow : stats) {
             double flow_throughput = flow.second.rxPackets * PACKET_SIZE * 8.0 / (flow.second.timeLastRxPacket.GetSeconds() - flow.second.timeFirstTxPacket.GetSeconds()) / 1e6;
 
             if(flow_throughput < 1e-3) {
@@ -82,24 +75,11 @@ void analyze_throughput_distance(double distance_max, double distance_step, doub
             }
 
             double rssi_average = calc_mean(rssi);
-            double snr_average = calc_mean(snr);
-            double noise_average = calc_mean(noise);
-
-            double rssi_dev = calc_std_dev(rssi, rssi_average);
-            double snr_dev = calc_std_dev(snr, snr_average);
-            double noise_dev = calc_std_dev(noise, snr_average);
             
             out << distance << ",";
             out << flow_throughput << ","; 
-            out << rssi_average << ","; 
-            out << snr_average << ","; 
-            out << noise_average << ","; 
-            out << rssi_dev << ","; 
-            out << snr_dev << ","; 
-            out << noise_dev << std::endl;
-
+            out << rssi_average << std::endl; 
         }
-
         Simulator::Destroy();
     }
     
