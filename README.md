@@ -20,7 +20,7 @@ cd $WORKING_DIR/ns-allinone-3.43/ns-3.43/
 ./ns3 configure
 ./ns3 build
 
-# run simulation (could take a while)
+# run simulation for all models (could take a while)
 cp $PROJECT_DIR/{propagation.cc,helper.h} $WORKING_DIR/ns-allinone-3.43/ns-3.43/scratch/
 for m in "friis" "fixed_rss" "three_log" "two_ray" "nakagami"; do ./ns3 run propagation.cc -- --model=$m; done
 
